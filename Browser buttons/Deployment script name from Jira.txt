@@ -1,0 +1,15 @@
+/* Generates and shows a deployment script file name based on the opened Jira ticked number and title. Optionally copies to clipboard. */
+javascript: 
+(function(path){
+  var prefix = 'V' + new Date().toISOString().split('.')[0].replace(/-/g, '').replace('T','').replace(/:/g,'') + '__';
+  var filename = '';
+  try {
+    filename = path + prefix + document.getElementById("key-val").innerHTML + '_' + document.getElementById("summary-val").innerText.replace(/[\W_]+/g," ").split(" ").join("_") + '.sql';
+  } 
+  catch(err) {
+    filename = prefix;
+  };
+  filename = prompt('Copy file name to clipboard', filename);
+  if (filename != null)
+    navigator.clipboard.writeText(filename)
+})('C:\\Dev\\Migrations\\');
