@@ -5,6 +5,15 @@ if "%gitpath%"=="" set gitpath=git
 
 %gitpath% fetch upstream main:main
 %gitpath% push origin main
-%gitpath% stash push
+
+
+for /f %%i in ('call %gitpath% status --porcelain') do set stash=%%i
+if not "%stash%" == "" (
+  %gitpath% stash push
+)
+
 %gitpath% rebase main
-%gitpath% stash pop
+
+if not "%stash%" == "" (
+  %gitpath% stash pop
+)
