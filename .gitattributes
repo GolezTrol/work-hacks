@@ -1,0 +1,2 @@
+# sh files run in bash or under WSL and die horribly if not LF
+*.sh text eol=lf
