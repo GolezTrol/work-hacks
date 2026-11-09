@@ -12,9 +12,14 @@ for /f "tokens=* USEBACKQ" %%a in (`%gitpath% remote show upstream ^| FindStr /L
   if "!main!"=="" set main=!mainbit!
 )
 
+if "%main%"=="" (
+  echo Could not determine the main branch of upstream.
+  exit /b 1
+)
+
 echo Main branch: %main%
 
 :ok
-%gitpath% fetch upstream %main%:%main%
-%gitpath% push origin %main%
+%gitpath% fetch upstream %main%:%main% || exit /b 1
+%gitpath% push origin %main% || exit /b 1
 %gitpath% rebase %main% --autostash

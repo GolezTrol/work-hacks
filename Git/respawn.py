@@ -27,7 +27,15 @@ print('Bringing branch up to date')
 # Make sure master and our branch are up to date
 repo.git.fetch('upstream', 'master:master')
 origin = repo.remotes['origin']
-origin.push(refspec='master:master')
+
+# GitPython's push() does not raise when the remote rejects a ref; check the flags ourselves.
+def checkPush(results):
+  for info in results:
+    if info.flags & (info.ERROR | info.REJECTED | info.REMOTE_REJECTED | info.REMOTE_FAILURE):
+      print('Push failed for ' + info.local_ref.name + ': ' + (info.summary or '').strip())
+      exit(1)
+
+checkPush(origin.push(refspec='master:master'))
 repo.git.rebase('master')
 
 print('Fetching list of snapshots from AWS')
@@ -85,5 +93,5 @@ else:
 print('Current snapshot: ' + latestSnapshot)
 
 # Push to origin
-origin.push(force=True, refspec='Respawn:Respawn');
+checkPush(origin.push(force=True, refspec='Respawn:Respawn'))
 
